@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Events - EventHub</title>
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="py-5">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="row align-items-center mb-4">
+                <div class="col-md-7">
+                    <h1 class="fw-bold mb-1">Browse All Events</h1>
+                    <p class="text-muted mb-0">Discover technical workshops, campus fests, sports tournaments, and seminars.</p>
+                </div>
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    <a th:href="@{/admin/events/new}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i> Organize New Event
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="card p-3 shadow-sm border-0 mb-4 rounded-3">
+                <form th:action="@{/events}" method="get" class="row g-2 align-items-center">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" name="search" th:value="${currentSearch}" 
+                                   class="form-control border-start-0" 
+                                   placeholder="Search by event title, topic, or keyword...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="category" class="form-select">
+                            <option value="">All Categories</option>
+                            <option th:each="cat : ${categories}" 
+                                    th:value="${cat}" 
+                                    th:text="${cat}" 
+                                    th:selected="${cat == currentCategory}">Category</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-grid gap-2 d-flex">
+                        <button type="submit" class="btn btn-primary flex-grow-1">Filter</button>
+                        <a th:if="${currentSearch != null or currentCategory != null}" 
+                           th:href="@{/events}" class="btn btn-outline-secondary" title="Clear Filters">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Active Filters Summary -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted small">
+                    Showing <strong th:text="${totalFound}">0</strong> event(s)
+                    <span th:if="${currentCategory != null and !currentCategory.isEmpty()}" 
+                          th:text="' in category: ' + ${currentCategory}"></span>
+                    <span th:if="${currentSearch != null and !currentSearch.isEmpty()}" 
+                          th:text="' matching: &quot;' + ${currentSearch} + '&quot;'"></span>
+                </span>
+            </div>
+
+            <!-- Events Grid -->
+            <div class="row g-4" th:if="${not #lists.isEmpty(events)}">
+                <div class="col-lg-4 col-md-6" th:each="event : ${events}">
+                    <div class="card event-card">
+                        <div class="event-img-wrapper">
+                            <span class="badge bg-primary category-tag" th:text="${event.category}">Technical</span>
+                            <span th:if="${event.full}" class="badge bg-danger status-tag">Sold Out</span>
+                            <span th:unless="${event.full}" class="badge bg-success status-tag" 
+                                  th:text="${event.seatsLeft + ' Seats Left'}">Available</span>
+                            <img th:src="${event.bannerUrl != null and !event.bannerUrl.isEmpty()} ? ${event.bannerUrl} : 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=800&q=80'" 
+                                 alt="Event Banner">
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="text-primary small fw-semibold mb-1">
+                                <i class="bi bi-calendar-event me-1"></i> <span th:text="${event.formattedDate}">Date</span>
+                            </div>
+                            <h5 class="card-title fw-bold text-dark mb-2" th:text="${event.title}">Event Title</h5>
+                            <p class="card-text text-muted small flex-grow-1" 
+                               th:text="${#strings.abbreviate(event.description, 110)}">
+                                Event description preview...
+                            </p>
+                            
+                            <div class="d-flex align-items-center text-secondary small mb-3">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                                <span class="text-truncate" th:text="${event.venue}">Venue</span>
+                            </div>
+
+                            <!-- Capacity Bar -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span>Capacity</span>
+                                    <span th:text="${event.registeredCount + ' / ' + event.capacity + ' Registered'}">0 / 50</span>
+                                </div>
+                                <div class="progress seat-progress">
+                                    <div class="progress-bar bg-primary" role="progressbar" 
+                                         th:style="'width: ' + ${event.fillPercentage} + '%;'" 
+                                         th:aria-valuenow="${event.fillPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 mt-auto">
+                                <a th:href="@{/events/{id}(id=${event.id})}" class="btn btn-outline-secondary btn-sm flex-fill">
+                                    View Details
+                                </a>
+                                <a th:if="${!event.full}" th:href="@{/events/{id}/register(id=${event.id})}" class="btn btn-primary btn-sm flex-fill">
+                                    Register
+                                </a>
+                                <button th:if="${event.full}" class="btn btn-secondary btn-sm flex-fill" disabled>
+                                    Sold Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Events Found State -->
+            <div th:if="${#lists.isEmpty(events)}" class="text-center py-5 bg-white rounded-4 shadow-sm border">
+                <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+                <h4 class="fw-bold mt-3 text-secondary">No Matching Events Found</h4>
+                <p class="text-muted small">Try adjusting your search criteria or clearing selected filters.</p>
+                <a th:href="@{/events}" class="btn btn-primary btn-sm mt-2">Clear All Filters</a>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
