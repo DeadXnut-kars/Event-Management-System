@@ -1,5 +1,4 @@
 package com.eventhub;
-
 import com.eventhub.model.Event;
 import com.eventhub.model.Registration;
 import com.eventhub.repository.EventRepository;
@@ -10,10 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDateTime;
-
 @SpringBootApplication
 public class EventManagementApplication {
-
     public static void main(String[] args) {
         // Bootstrap and run the Spring Boot web application
         SpringApplication.run(EventManagementApplication.class, args);
@@ -23,7 +20,6 @@ public class EventManagementApplication {
         System.out.println(" Admin Console: http://localhost:8080/admin");
         System.out.println("---------------------------------------------------------");
     }
-
     @Bean
     public CommandLineRunner seedInitialData(EventRepository eventRepository, RegistrationRepository registrationRepository) {
         return args -> {
