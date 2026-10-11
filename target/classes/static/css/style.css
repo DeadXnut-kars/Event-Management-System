@@ -1,0 +1,208 @@
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --secondary-color: #0ea5e9;
+    --dark-bg: #0f172a;
+    --card-bg: #ffffff;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.5px;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-color) !important;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+    color: white;
+    padding: 4.5rem 0 3.5rem;
+    position: relative;
+    border-radius: 0 0 2rem 2rem;
+    box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.3);
+}
+
+.hero-badge {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 0.4rem 1rem;
+    border-radius: 50rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Stat Cards */
+.stat-card {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+
+/* Event Cards */
+.event-card {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.event-img-wrapper {
+    height: 190px;
+    position: relative;
+    overflow: hidden;
+    background-color: #1e293b;
+}
+
+.event-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.event-card:hover .event-img-wrapper img {
+    transform: scale(1.05);
+}
+
+.category-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    padding: 0.35rem 0.75rem;
+    border-radius: 50rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.status-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+}
+
+/* Ticket Pass Component */
+.ticket-container {
+    max-width: 680px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 1.25rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 2px dashed #cbd5e1;
+    position: relative;
+}
+
+.ticket-header {
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    color: white;
+    padding: 1.75rem 2rem;
+}
+
+.ticket-body {
+    padding: 2rem;
+}
+
+.ticket-stub {
+    background: #f8fafc;
+    border-top: 2px dashed #cbd5e1;
+    padding: 1.25rem 2rem;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.25rem;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    font-weight: 600;
+    border-radius: 0.5rem;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Progress bar */
+.seat-progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e2e8f0;
+}
+
+/* Print Styles */
+@media print {
+    nav, footer, .no-print {
+        display: none !important;
+    }
+    body {
+        background-color: white !important;
+    }
+    .ticket-container {
+        border: 2px solid #000 !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+    }
+}

@@ -1,0 +1,11 @@
+com\eventhub\repository\EventRepository.class
+com\eventhub\controller\RegistrationController.class
+com\eventhub\controller\EventController.class
+com\eventhub\model\Registration.class
+com\eventhub\service\EventService.class
+com\eventhub\controller\HomeController.class
+com\eventhub\controller\AdminController.class
+com\eventhub\repository\RegistrationRepository.class
+com\eventhub\service\RegistrationService.class
+com\eventhub\EventManagementApplication.class
+com\eventhub\model\Event.class

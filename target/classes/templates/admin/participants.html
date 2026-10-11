@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Participants - ' + ${event.title}">Participants List - EventHub</title>
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+                <a th:href="@{/admin}" class="text-decoration-none text-muted">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                </a>
+                <div class="d-flex gap-2">
+                    <button onclick="window.print()" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-printer me-1"></i> Print / Export List
+                    </button>
+                    <a th:href="@{/events/{id}(id=${event.id})}" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Public Event Page
+                    </a>
+                </div>
+            </div>
+
+            <!-- Flash messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show no-print" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${successMessage}">Success</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show no-print" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${errorMessage}">Error</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Event Header Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
+                <div class="row align-items-center g-3">
+                    <div class="col-lg-8">
+                        <span class="badge bg-primary px-3 py-1 rounded-pill mb-2" th:text="${event.category}">Category</span>
+                        <h3 class="fw-bold mb-1" th:text="${event.title}">Event Title</h3>
+                        <div class="d-flex flex-wrap gap-3 small text-muted">
+                            <div><i class="bi bi-calendar3 me-1"></i> <span th:text="${event.formattedDate}">Date</span></div>
+                            <div><i class="bi bi-geo-alt me-1"></i> <span th:text="${event.venue}">Venue</span></div>
+                            <div><i class="bi bi-person me-1"></i> <span th:text="'Organizer: ' + ${event.organizerName}">Organizer</span></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <div class="bg-light p-3 rounded-3 d-inline-block text-start w-100" style="max-width: 320px;">
+                            <div class="d-flex justify-content-between small fw-bold mb-1">
+                                <span>Capacity Utilization</span>
+                                <span th:text="${participantCount + ' / ' + event.capacity}">0 / 100</span>
+                            </div>
+                            <div class="progress seat-progress mb-2">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     th:style="'width: ' + ${event.fillPercentage} + '%;'" 
+                                     th:aria-valuenow="${event.fillPercentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <small class="text-muted" th:text="${seatsLeft + ' available seat(s) remaining'}">Remaining</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participants Table Card -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div class="card-header bg-white p-4 border-0 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <h5 class="fw-bold mb-0">Registered Attendees (<span th:text="${participantCount}">0</span>)</h5>
+                    <div class="no-print" style="max-width: 300px; width: 100%;">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                            <input type="text" id="tableSearchInput" class="form-control border-start-0" 
+                                   placeholder="Filter attendees by name, email, org...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="participantsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">#</th>
+                                <th>Pass Code</th>
+                                <th>Attendee Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Organization / Role</th>
+                                <th>Registered</th>
+                                <th class="text-end pe-4 no-print">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p, stat : ${participants}">
+                                <td class="ps-4 fw-semibold text-muted" th:text="${stat.count}">1</td>
+                                <td>
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace px-2 py-1" 
+                                          th:text="${p.registrationCode}">EVT-2026-X89J</span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-dark d-block" th:text="${p.participantName}">Full Name</span>
+                                    <small th:if="${p.specialNotes != null and !p.specialNotes.isEmpty()}" 
+                                           class="text-muted fst-italic" th:text="'Note: ' + ${p.specialNotes}">Notes</small>
+                                </td>
+                                <td>
+                                    <a th:href="'mailto:' + ${p.email}" class="text-decoration-none" th:text="${p.email}">email@domain.com</a>
+                                </td>
+                                <td th:text="${p.phone}">9876543210</td>
+                                <td>
+                                    <div class="small fw-semibold text-dark" th:text="${p.organization != null ? p.organization : 'Independent'}">Organization</div>
+                                    <div class="small text-muted" th:text="${p.roleTitle != null ? p.roleTitle : ''}">Role</div>
+                                </td>
+                                <td class="small text-secondary" th:text="${p.formattedDate}">05 Oct 2026</td>
+                                <td class="text-end pe-4 no-print">
+                                    <form th:action="@{/admin/participants/{id}/delete(id=${p.id})}" method="post" class="d-inline">
+                                        <input type="hidden" name="eventId" th:value="${event.id}">
+                                        <button type="submit" 
+                                                onclick="return confirm('Cancel this registration? This action cannot be undone.');" 
+                                                class="btn btn-outline-danger btn-sm" title="Cancel Registration">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(participants)}">
+                                <td colspan="8" class="text-center py-5 text-muted">
+                                    <i class="bi bi-people text-muted" style="font-size: 2.5rem;"></i>
+                                    <p class="mt-2 mb-0">No attendees have registered for this event yet.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

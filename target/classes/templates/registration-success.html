@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Confirmed - Event Pass</title>
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-light">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="py-5">
+        <div class="container">
+            <div class="text-center mb-4 no-print">
+                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center mb-3 shadow" style="width: 70px; height: 70px;">
+                    <i class="bi bi-check-lg fs-1"></i>
+                </div>
+                <h2 class="fw-bold text-dark">You're Registered!</h2>
+                <p class="text-muted">Your spot is confirmed. Keep your reference code handy for check-in.</p>
+            </div>
+
+            <!-- Ticket Pass Card -->
+            <div class="ticket-container">
+                <div class="ticket-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-light text-primary px-3 py-1 rounded-pill mb-2 fw-bold" 
+                              th:text="${registration.event.category}">Category</span>
+                        <h4 class="fw-bold mb-0 text-white" th:text="${registration.event.title}">Event Title</h4>
+                    </div>
+                    <div class="text-end">
+                        <i class="bi bi-qr-code text-white fs-1"></i>
+                    </div>
+                </div>
+
+                <div class="ticket-body">
+                    <div class="row g-4">
+                        <div class="col-sm-6">
+                            <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 0.75rem;">Attendee</small>
+                            <h5 class="fw-bold text-dark mb-0" th:text="${registration.participantName}">Attendee Name</h5>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 0.75rem;">Pass Code</small>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-primary fs-6 px-3 py-2 font-monospace" th:text="${registration.registrationCode}">EVT-2026-X89J</span>
+                                <button type="button" class="btn btn-outline-secondary btn-sm no-print" 
+                                        th:onclick="'copyTicketCode(\'' + ${registration.registrationCode} + '\')'" title="Copy Code">
+                                    <i class="bi bi-clipboard"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 0.75rem;">Date & Time</small>
+                            <span class="fw-semibold text-secondary" th:text="${registration.event.formattedDate}">Mon, 15 Oct 2026, 10:00 AM</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 0.75rem;">Venue</small>
+                            <span class="fw-semibold text-secondary" th:text="${registration.event.venue}">Auditorium Hall B</span>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 0.75rem;">Email</small>
+                            <span class="text-secondary" th:text="${registration.email}">email@example.com</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 0.75rem;">Phone</small>
+                            <span class="text-secondary" th:text="${registration.phone}">9876543210</span>
+                        </div>
+
+                        <div class="col-sm-6" th:if="${registration.organization != null and !registration.organization.isEmpty()}">
+                            <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 0.75rem;">Organization</small>
+                            <span class="text-secondary" th:text="${registration.organization}">Organization</span>
+                        </div>
+                        <div class="col-sm-6" th:if="${registration.roleTitle != null and !registration.roleTitle.isEmpty()}">
+                            <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 0.75rem;">Role / Title</small>
+                            <span class="text-secondary" th:text="${registration.roleTitle}">Role</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticket-stub d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted d-block" style="font-size: 0.75rem;">Issued On</small>
+                        <span class="small fw-semibold text-secondary" th:text="${registration.formattedDate}">05 Oct 2026</span>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                            <i class="bi bi-shield-check me-1"></i> Confirmed Pass
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-4 d-flex justify-content-center gap-3 no-print">
+                <button onclick="window.print()" class="btn btn-outline-dark px-4">
+                    <i class="bi bi-printer me-2"></i> Print / Save Pass
+                </button>
+                <a th:href="@{/events}" class="btn btn-primary px-4">
+                    <i class="bi bi-grid me-2"></i> Browse More Events
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
