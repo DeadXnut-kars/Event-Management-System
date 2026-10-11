@@ -1,9 +1,15 @@
 com\eventhub\repository\EventRepository.class
+com\eventhub\dao\EventAnalyticsDao.class
 com\eventhub\controller\RegistrationController.class
+com\eventhub\servlet\ParticipantCsvExportServlet.class
 com\eventhub\controller\EventController.class
 com\eventhub\model\Registration.class
+com\eventhub\concurrency\EventMonitoringDaemon.class
+com\eventhub\config\ServletConfig.class
 com\eventhub\service\EventService.class
+com\eventhub\dto\EventOccupancyDto.class
 com\eventhub\controller\HomeController.class
+com\eventhub\concurrency\BookingLockManager.class
 com\eventhub\controller\AdminController.class
 com\eventhub\repository\RegistrationRepository.class
 com\eventhub\service\RegistrationService.class

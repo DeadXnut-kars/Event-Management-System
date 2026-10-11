@@ -23,12 +23,17 @@ public class AdminController {
     // Services handling business operations for events and attendee registrations
     private final EventService eventService;
     private final RegistrationService registrationService;
+    // Direct JDBC DAO executing raw PreparedStatement queries for aggregate reporting
+    private final com.eventhub.dao.EventAnalyticsDao eventAnalyticsDao;
 
     @Autowired
-    public AdminController(EventService eventService, RegistrationService registrationService) {
+    public AdminController(EventService eventService,
+                           RegistrationService registrationService,
+                           com.eventhub.dao.EventAnalyticsDao eventAnalyticsDao) {
         // Inject dependencies for administrative event and attendee management
         this.eventService = eventService;
         this.registrationService = registrationService;
+        this.eventAnalyticsDao = eventAnalyticsDao;
     }
 
     @GetMapping
@@ -162,5 +167,15 @@ public class AdminController {
         }
         // Redirect back to the participant list for this event
         return "redirect:/admin/events/" + eventId + "/participants";
+    }
+
+    @GetMapping("/analytics")
+    public String viewAnalytics(Model model) {
+        // Query database via direct JDBC DAO bypassing JPA to compute live occupancy statistics
+        List<com.eventhub.dto.EventOccupancyDto> analyticsList = eventAnalyticsDao.getEventOccupancyAnalytics();
+        // Bind raw JDBC analytics collection to the view model
+        model.addAttribute("analyticsList", analyticsList);
+        // Render analytics view template
+        return "admin/analytics";
     }
 }

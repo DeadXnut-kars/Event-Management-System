@@ -20,6 +20,9 @@
                     <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
                 </a>
                 <div class="d-flex gap-2">
+                    <a th:href="@{/export/participants.csv(eventId=${event.id})}" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV (Servlet API)
+                    </a>
                     <button onclick="window.print()" class="btn btn-outline-dark btn-sm">
                         <i class="bi bi-printer me-1"></i> Print / Export List
                     </button>
