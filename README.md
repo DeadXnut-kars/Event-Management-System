@@ -186,7 +186,7 @@ event-management-system/
 
 ### 2. Clone the Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/event-management-system.git
+git clone https://github.com/sahilcodes-deadxnut/event-management-system.git
 cd event-management-system
 ```
 
